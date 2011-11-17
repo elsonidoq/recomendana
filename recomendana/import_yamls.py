@@ -26,16 +26,17 @@ def decode_if_not_none(e):
     if e is not None: 
         e= re.sub('\xc2.', '', e)
         # si no, hay un par que no los puede insertar en la db
-        return e.decode('ascii', 'ignore')
+        return e.decode('utf8')
 
 def process_fname(fname):
+    print "\tloading yaml..."
     with open(fname) as f:
         data= yaml.load(f)
     
     for i, d in enumerate(data):
         # ignoro los que tienen solo 'id' y 'url'
         if len(d) == 2: continue
-        if i % 500 == 0: print '\t',i,'of',len(data)
+        if i % 100 == 0: print '\t',i,'of',len(data)
         m= models.Movie()
         try:
             m.description= decode_if_not_none(d.get('descripcion'))
