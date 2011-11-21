@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load url from future %}
+
+
+{% block content %}
+
+{% if namedreg_form.errors %}
+    <div class="txterror">Hubo errores de validación.</div>
+{% endif %}
+
+<script type="text/javascript">
+    $(function() {
+        $( ".datePicker" ).datepicker({
+			numberOfMonths: 2,
+			showButtonPanel: true,
+                        dateFormat: 'dd/mm/yy',
+                        changeMonth: true,
+			changeYear: true
+		});
+    });
+</script>
+
+{% if success %}
+    <h2>Exito!</h2>
+    <p>Se mandó un mail, bla bla bla. vos fijate.</p>
+    <p>Ir al <a href="{% url 'recomendana_prof.views.index' %}">prinicipio</a>. </p>
+{% else %}
+    <form method="post" action="{% url 'recomendana_prof.views.namedregister' %}">
+    {% csrf_token %}
+    <ul>
+        {% for field in namedreg_form %}
+            <li>
+               <div class="fieldset">{{ field.label_tag }}:</div> <div class="optionset"> {{ field }} </div>
+               {% if field.errors %}
+                   <span class="txterror">{{field.errors.as_text}} </span>
+               {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+    
+    
+    <input type="submit" value="register" />
+    <input type="hidden" name="next" value="/" />
+    </form>
+{% endif %}
+
+{% endblock %}

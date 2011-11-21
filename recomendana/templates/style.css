@@ -1,0 +1,9 @@
+.txterror{
+    display:inline;
+    color: red;
+}
+
+.fieldset{
+    width: 150px;
+    display:inline;
+}

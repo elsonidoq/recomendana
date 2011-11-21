@@ -1,4 +1,6 @@
 from django.db import models
+from django.contrib.auth.models import User
+from django.db.models.signals import post_save
 
 class Movie(models.Model):
     cast= models.CharField(max_length=500, null=True)
@@ -18,10 +20,11 @@ class Movie(models.Model):
         return "title=%s" % self.title
 
 class Account(models.Model):
+    user = models.OneToOneField(User)
     is_anonymous=models.BooleanField(default=True)
     # todos los campos son nullable porque la cuenta puede ser anonima
-    email= models.CharField(max_length=200, null=True)
-    password= models.CharField(max_length=200, null=True)
+    #email= models.CharField(max_length=200, null=True)
+    #password= models.CharField(max_length=200, null=True)
     birth_date= models.DateField(null=True)
     # BooleanField no puede tener nulls, true=hombre, false=mujer
     gender= models.NullBooleanField(null=True) 
@@ -54,6 +57,10 @@ class Account(models.Model):
             """ % dict(cnt=cnt)
 
         return Movie.objects.raw(query)
+
+def link_djangouser_to_account(sender, instance, created, **kwargs):  
+    if created:  
+       profile, created = Account.objects.get_or_create(user=instance)  
     
 class MovieReview(models.Model):
     movie= models.ForeignKey(Movie)
@@ -71,3 +78,6 @@ class MovieReview(models.Model):
 
     def __str__(self):
         return 'movie:%s, account= %s, review=%s' % (self.movie, self.account, self.review)
+
+
+post_save.connect(link_djangouser_to_account, sender=User) 

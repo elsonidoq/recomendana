@@ -22,4 +22,9 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^login/$', 'django.contrib.auth.views.login'),
+    url(r'^logout/$', 'recomendana_prof.views.salir'),
+    url(r'^reg/$', 'recomendana_prof.views.namedregister'),
+    url(r'^anon/$', 'recomendana_prof.views.anonregister'),
+    url(r'^$', 'recomendana_prof.views.index'),
 )

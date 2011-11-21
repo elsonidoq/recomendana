@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% load url from future %}
+{% block content %}
+
+{% if user.is_authenticated %}
+    <ul>
+        <li><a href="{% url 'recomendana_prof.views.salir' %}">Logout</a></li>
+    </ul>
+    <p>Hola, {{ user.username }}. Esto es todo.</p>
+{% else %}
+    <ul>
+        <li><a href="{% url 'django.contrib.auth.views.login' %}">Login</a></li>
+        <li><a href="{% url 'recomendana_prof.views.namedregister' %}">Registrarte como un macho</a></li>
+        <li><a href="{% url 'recomendana_prof.views.anonregister' %}">Usa el sitio anonimamente</a></li>
+    </ul>
+
+{% endif %}
+
+{% endblock %}
