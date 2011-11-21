@@ -15,9 +15,12 @@ DATABASES = {
         #'ENGINE': 'django.db.backends.', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
         'ENGINE':'django.db.backends.mysql',
         'NAME': 'recomendana',                      # Or path to database file if using sqlite3.
-        'USER': 'p3l1s', # Not used with sqlite3.
-        'PASSWORD': 'tpml11*', # Not used with sqlite3.
-        'HOST': 'localhost', # Set to empty string for localhost. Not used with sqlite3.
+        'USER': 'root',                      # Not used with sqlite3.
+        'PASSWORD': 'gilada',                  # Not used with sqlite3.
+        'HOST': '192.168.1.100',                      # Set to empty string for localhost. Not used with sqlite3.
+        #        'USER': 'p3l1s', # Not used with sqlite3.
+        #'PASSWORD': 'tpml11*', # Not used with sqlite3.
+        #'HOST': 'localhost', # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
 }

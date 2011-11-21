@@ -3,11 +3,61 @@ from django.core import validators
 from django.contrib.auth.models import User
 from django.forms.util import ErrorList
 from datetime import date
+import uuid
 
 class AnonRegForm(forms.Form):
     name = forms.RegexField(regex=r'^\w+$',   widget=forms.TextInput(), required=False )
     dob = forms.DateField(widget=forms.DateInput(attrs={'class':'datePicker', 'readonly':'true'}), required=False)
+    film_exp = forms.ChoiceField(initial='0', label=u'Experiencia filmica(?)', required=False,
+                                 choices = (('0','Que te importa'),  ('1','Principiante'),('2','Decente'),('3','Una vez vi una peli japonesa'),('4','Intermedio'),('5','Avanzado')))
+    sexo = forms.ChoiceField(required=False, initial='', choices = (('','Que te importa'), ('True','Masculino'),('False','Femenino')), label=u'Sexo')
 
+    def habemusUsername(self):
+        return 'name' in self.cleaned_data and len(self.cleaned_data['name'])>0 and not self.cleaned_data['name'].isspace()
+
+    def clean(self):
+        if self.habemusUsername():
+            print "username: ("+self.cleaned_data['name']+")"
+            try:
+                User.objects.get(username=self.cleaned_data['name'])
+            except User.DoesNotExist:
+                pass
+            else:
+                msg = u'Usuario ya existe'
+                self._errors["name"] = self.error_class([msg])
+                raise forms.ValidationError(msg)
+        
+        if 'dob' in self.cleaned_data and self.cleaned_data['dob'] != None and self.cleaned_data['dob'] > date (2000,1,1):
+            msg = u'Volve en un par de anios.'
+            self._errors["dob"] = self.error_class([msg])
+            raise forms.ValidationError(msg)
+            
+        return self.cleaned_data
+    
+    def save(self, new_data,meta):
+        if self.habemusUsername():
+            username = new_data['name']
+        else:
+            username = "anon"+ str(uuid.uuid1())[0:20]
+        u = User.objects.create_user(username,
+                                     "anon@"+str(uuid.uuid1())+".org",
+                                     str(uuid.uuid1()))
+        u.is_active = True
+        u.save()
+        
+        u.get_profile().is_anonymous = True
+        print new_data["dob"]
+        if new_data["dob"]!=None:
+            u.get_profile().birth_date = new_data["dob"]
+        if int(new_data["film_exp"]) > 0:
+            u.get_profile().film_experience = int(new_data['film_exp'])
+        if not new_data["sexo"].isspace():
+            u.get_profile().gender = bool(new_data['sexo'])
+        u.get_profile().access_ip = meta['REMOTE_ADDR']
+        u.get_profile().save()
+
+        return u
+    
 class NamedRegForm(forms.Form):
     name = forms.RegexField(regex=r'^\w+$',   widget=forms.TextInput(),required=True,label=u'Nombre de usuario' )
     dob = forms.DateField(widget=forms.DateInput(attrs={'class':'datePicker', 'readonly':'true'}), label=u'Fecha de nacimiento', required=True)
@@ -43,7 +93,6 @@ class NamedRegForm(forms.Form):
         return self.cleaned_data
     
     def save(self, new_data,meta):
-        print new_data['password_orig']
         u = User.objects.create_user(new_data['name'],
                                      new_data['email'],
                                      new_data['password_orig'])

@@ -7,7 +7,14 @@
     <ul>
         <li><a href="{% url 'recomendana_prof.views.salir' %}">Logout</a></li>
     </ul>
-    <p>Hola, {{ user.username }}. Esto es todo.</p>
+    <p>Hola,
+    
+    {% if user.get_profile.is_anonymous %}
+        usuario anonimo
+    {% else %}
+        {{ user.username }}
+    {% endif %}
+    .Esto es todo lo que hay por ahora.</p>
 {% else %}
     <ul>
         <li><a href="{% url 'django.contrib.auth.views.login' %}">Login</a></li>

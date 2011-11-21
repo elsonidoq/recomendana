@@ -5,13 +5,10 @@
 {% block content %}
 
 
-{% if namedreg_form.errors %}
+{% if anonreg_form.errors %}
     <div class="txterror">Hubo errores de validación.</div>
 {% endif %}
 
-<p>
-    Si no queres dar todos tus datos podes usar una <a href="{% url 'recomendana_prof.views.anonregister' %}">session anonima</a>.
-</p>
 <script type="text/javascript">
     $(function() {
         $( ".datePicker" ).datepicker({
@@ -24,15 +21,12 @@
     });
 </script>
 
-{% if success %}
-    <h2>Exito!</h2>
-    <p>Se mandó un mail, bla bla bla. vos fijate.</p>
-    <p>Ir al <a href="{% url 'recomendana_prof.views.index' %}">prinicipio</a>. </p>
-{% else %}
-    <form method="post" action="{% url 'recomendana_prof.views.namedregister' %}">
+<p>Danos los datos que quieras, deja en blanco el resto. Tu sesion estara activa mientras no cierres el sitio.</p>
+
+    <form method="post" action="{% url 'recomendana_prof.views.anonregister' %}">
     {% csrf_token %}
     <ul>
-        {% for field in namedreg_form %}
+        {% for field in anonreg_form %}
             <li>
                <div class="fieldset">{{ field.label_tag }}:</div> <div class="optionset"> {{ field }} </div>
                {% if field.errors %}
@@ -46,6 +40,5 @@
     <input type="submit" value="register" />
     <input type="hidden" name="next" value="/" />
     </form>
-{% endif %}
 
 {% endblock %}
