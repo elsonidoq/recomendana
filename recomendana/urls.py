@@ -3,7 +3,7 @@ from django.conf.urls.defaults import patterns, include, url
 # comment the next two lines to disable the admin:
 from django.contrib import admin
 from recomendana_prof import models
-admin.site.register(models.Account)
+#admin.site.register(models.Account)
 admin.site.register(models.Movie)
 admin.site.register(models.MovieReview)
 admin.autodiscover()
@@ -26,5 +26,6 @@ urlpatterns = patterns('',
     url(r'^logout/$', 'recomendana_prof.views.salir'),
     url(r'^reg/$', 'recomendana_prof.views.namedregister'),
     url(r'^anon/$', 'recomendana_prof.views.anonregister'),
+    url(r'^confirmregistration/(?P<key>.+)?', 'recomendana_prof.views.confirmregister'),
     url(r'^$', 'recomendana_prof.views.index'),
 )

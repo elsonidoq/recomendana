@@ -1,9 +1,28 @@
+body
+{
+    margin-left: 10px;
+    margin-right: 10px;
+    font-family: Tahoma, Helvetica, Verdana, Arial, sans-serif;
+    font-size: 11px;
+    color: #000000;
+}
+
 .txterror{
-    display:inline;
+    display: inline;
     color: red;
 }
 
-.fieldset{
+.fieldset75{
+    width: 75px;
+    display: inline-block;
+}
+
+
+.fieldset150, .fieldset{
     width: 150px;
-    display:inline;
+    display: inline-block;
+}
+
+.optionset{
+    display: inline;
 }

@@ -1,9 +1,36 @@
 from django.shortcuts import render_to_response,redirect
 from django.template import RequestContext
+
 from recomendana_prof.forms import NamedRegForm,AnonRegForm
+from recomendana_prof.models import ConfirmManager
+
 from django.contrib.auth import logout,load_backend, login
+from django.contrib.auth.models import User
 from django.conf import settings
  
+from django.core.urlresolvers import reverse, NoReverseMatch
+
+ 
+def confirmregister(request, key):
+    user = None
+    manager = ConfirmManager()
+
+    if key == None:
+        if request.method == 'POST' and 'key' in request.POST:
+            key = request.POST['key'].strip()
+
+    if key != None:
+        key = key.lower()
+        user = manager.confirm_email(key)
+        
+    values = {'key': key}
+    if user != None:
+        values['user_confirmacion'] = user
+        values['next'] = reverse("django.contrib.auth.views.login")
+    
+    return render_to_response("registration/confirm.html",
+                values, context_instance=RequestContext(request))
+    
 def anonregister(request):
     if request.user.is_authenticated():    
         return redirect('/')

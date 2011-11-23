@@ -1,7 +1,22 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.mail import EmailMessage
+from django.contrib.sites.models import Site
+import uuid
 
+class ConfirmManager(object):
+     def confirm_email(self, key):
+        try:
+            acc = Account.objects.get(challenge=key)
+        except ObjectDoesNotExist:
+            return None
+        else:
+            acc.user.is_active = True
+            acc.user.save()
+            return acc.user
+        
 class Movie(models.Model):
     cast= models.CharField(max_length=500, null=True)
     cuevana_id= models.IntegerField()
@@ -30,10 +45,32 @@ class Account(models.Model):
     gender= models.NullBooleanField(null=True) 
     # La idea es que la persona se autoevalue como critico. 
     film_experience= models.IntegerField(null=True)
+    # codigo para verificar la cuenta de email
+    challenge = models.CharField(max_length=64, null=True)
     # user agent + lo que sea
     access_ip= models.CharField(max_length=10, null=True)
     access_data= models.TextField(null=True)
 
+    def __init__(self, *args, **kwargs):
+        super(Account, self).__init__(*args, **kwargs)
+        self.challenge = str(uuid.uuid1())
+        
+    def mandarconfirm(self):
+        if self.user.is_active == False and self.is_anonymous == False:        
+            from django.core.urlresolvers import reverse, NoReverseMatch
+            try:
+                current_site = Site.objects.get_current()
+            except django.contrib.sites.models.DoesNotExist:
+                return
+            else:
+                challengepath = reverse("recomendana_prof.views.confirmregister")
+                challengeurl = u"http://%s%s" % (unicode(current_site.domain), challengepath)
+                msg = """Hola %s,
+                        visita %s%s si sos tan amable. Caso contrario visita %s
+                        y pone %s en el textbox"""  % (self.user.username, challengeurl, self.challenge, challengeurl, self.challenge)
+                email = EmailMessage('Recomendana - Confirmacion', msg, to=[self.user.email])
+                email.send()
+                
     def __str__(self):
         return 'id=%s, email=%s' % (self.id, str(self.email))
 
@@ -60,7 +97,8 @@ class Account(models.Model):
 
 def link_djangouser_to_account(sender, instance, created, **kwargs):  
     if created:  
-       profile, created = Account.objects.get_or_create(user=instance)  
+        profile, created = Account.objects.get_or_create(user=instance)
+    
     
 class MovieReview(models.Model):
     movie= models.ForeignKey(Movie)

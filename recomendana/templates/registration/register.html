@@ -1,17 +1,12 @@
 {% extends "base.html" %}
 {% load url from future %}
 
-
 {% block content %}
-
 
 {% if namedreg_form.errors %}
     <div class="txterror">Hubo errores de validación.</div>
 {% endif %}
 
-<p>
-    Si no queres dar todos tus datos podes usar una <a href="{% url 'recomendana_prof.views.anonregister' %}">session anonima</a>.
-</p>
 <script type="text/javascript">
     $(function() {
         $( ".datePicker" ).datepicker({
@@ -26,9 +21,14 @@
 
 {% if success %}
     <h2>Exito!</h2>
-    <p>Se mandó un mail, bla bla bla. vos fijate.</p>
+    <p>Se mandó un mail a la dirección que nos diste. En el hay un código que debes ingresar aca o bien un link que debes clickear para confirmar tu cuenta.</p>
     <p>Ir al <a href="{% url 'recomendana_prof.views.index' %}">prinicipio</a>. </p>
 {% else %}
+    
+    <p>
+        Si no queres dar todos tus datos podes usar una <a href="{% url 'recomendana_prof.views.anonregister' %}">session anonima</a>.
+    </p>
+
     <form method="post" action="{% url 'recomendana_prof.views.namedregister' %}">
     {% csrf_token %}
     <ul>
@@ -41,8 +41,7 @@
             </li>
         {% endfor %}
     </ul>
-    
-    
+
     <input type="submit" value="register" />
     <input type="hidden" name="next" value="/" />
     </form>

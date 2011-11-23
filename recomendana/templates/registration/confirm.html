@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load url from future %}
+
+
+{% block content %}
+
+{% if user_confirmacion %}
+    
+<script type="text/javascript">
+    $(function() {  
+        setTimeout(goToNext, 2500);
+    });
+    
+    function goToNext(){
+        window.location = {{ next }};
+    }
+</script>
+    <p>{{ user_confirmacion.username }} confirmado, yendo al login...</p>
+{% else %}
+    {% if key != None %}
+        <p class="txterror">El codigo ingresado no es valido, intentalo nuevamente copiandolo desde el email aqui.</p>
+    {% endif %}
+    
+    <form method="post" action="{% url 'recomendana_prof.views.confirmregister' %}">
+            {% csrf_token %}
+         <div class="fieldset75"><label for="key">Codigo:</label></div>
+         <div class="optionset"><input id="key" type="text" name="key"  size="35" maxlength="64" 
+                                       {% if key != None  %} value="{{ key }}" {% endif %} /> </div>
+         
+    <input type="submit" value="Enviar" />
+    
+    </form>
+
+{% endif %}
+
+{% endblock %}
