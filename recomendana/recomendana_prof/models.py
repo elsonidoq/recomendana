@@ -1,3 +1,4 @@
+import django
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
@@ -73,6 +74,60 @@ class Account(models.Model):
                 
     def __str__(self):
         return 'id=%s, email=%s' % (self.id, str(self.email))
+
+    # TO DO: cantidad de peliculas que vio y voto
+    def get_votes_count(self):
+        return 4
+
+    # TO DO: cantidad de peliculas que NO vio (review == 0)
+    def get_unseen_count(self):
+        return 3
+
+    # TO DO: setear review (0 == no vio, 1-5: vio)
+    # 0 == no vio
+    def set_vote(self, mid, n):
+        pass
+    
+    # TO DO: elegir forma de insertar el tiempo
+    # 0 = >10, 1 = <10 anios, 2 = <5, 3 = 0
+    def set_time(self, mid, t):
+        pass
+        
+    # TO DO: pedir el review (0 == no vio)
+    # 0 == no vio
+    def get_vote(self, mid):
+        return 2
+        
+    # TO DO: pedir el tiempo de hace cuanto la vio
+    # 0 = >10, 1 = <10, 2 = <5, 3 = 0
+    def get_time(self, mid):
+        return 3
+    
+    # REVISAR!
+    def get_movies_by_query(self, query, cnt = 10):
+        query = query.replace('\\', "\\\\")
+        query = query.replace('\'', "\\'")
+        actual_reviews= self.moviereview_set.all()
+        words = query.split(" ")
+        words = [w.lower() for w in words if len(w) > 2]
+        if len(words) == 0:
+            return []
+        fields = ["cast", "description", "director", "genre", "image", "language", "producer", "subtitles", "title"]
+        query = []
+        for w in words:
+            q = []
+            for f in fields:
+                q += [f + " LIKE '%%" + w + "%%'"]
+            query += ["(" + " OR ".join(q) + ")"]
+        query = " AND ".join(query)
+        query= """
+            select *
+            from  `recomendana`.`recomendana_prof_movie` 
+            where %(where)s
+            order by rand()*popularity desc 
+            limit %(cnt)s
+        """ % dict(cnt=cnt, where=query)
+        return Movie.objects.raw(query)
 
     def get_movies_to_review(self, cnt=10):
         actual_reviews= self.moviereview_set.all()

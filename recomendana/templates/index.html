@@ -14,7 +14,9 @@
     {% else %}
         {{ user.username }}
     {% endif %}
-    .Esto es todo lo que hay por ahora.</p>
+    .</p>
+    {% block voting %}{% endblock %}
+
 {% else %}
     <ul>
         <li><a href="{% url 'django.contrib.auth.views.login' %}">Login</a></li>
