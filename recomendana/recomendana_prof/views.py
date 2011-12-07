@@ -79,7 +79,7 @@ def salir(request):
 
 def voting(request):
 	#return render_to_response("voting/vote.html", context_instance=RequestContext(request))
-    account = Account()
+    account = request.user.account
     # ESTE ESTILO NO SE USA PERO QUEDA COPAAAADO!
     s = """
 <html>
@@ -122,6 +122,9 @@ height: 1px;
     # EL ESTILO DE ARRIBA NO SE USA PERO QUEDA COPAAADO
 
     s = ""
+    mid= None 
+    vote= None
+    last_seen=None
     for vot in request.POST.keys():
         v = []
         if "_" in vot:
@@ -129,12 +132,20 @@ height: 1px;
         try:
             v[0] = int(v[0])
             if v[1] == "n":
-                account.set_vote(v[0], request.POST[vot])
+                vote= request.POST[vot]
+                mid= v[0]
+                #account.set_vote(v[0], )
             elif v[1] == "t":
-                account.set_time(v[0], request.POST[vot])
+                last_seen= request.POST[vot]
+                #account.set_time(v[0], request.POST[vot])
+            if mid is not None and vote is not None and last_seen is not None:
+                account.vote(mid, vote, last_seen)
+                mid= None 
+                vote= None
+                last_seen=None
         except:
             pass
-    
+        
 
 
     s += "<div style='width:800px;text-align:left'>"
@@ -169,7 +180,7 @@ height: 1px;
     s += "<table style='width:800px;'>"
     for m in ms:
         s += "<tr>"
-        s += "<td style='width:100px;vertical-align:top;'><img src='" + m.image + "' width='100px'/><br/><br/></td>"
+        s += "<td style='width:100px;vertical-align:top;'><img src='" + m.image.replace('www','sc') + "' width='100px'/><br/><br/></td>"
 
         s += "<td style='padding-left: 10px;'>"
         

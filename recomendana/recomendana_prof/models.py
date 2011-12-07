@@ -1,3 +1,4 @@
+from datetime import datetime
 import django
 from django.db import models
 from django.contrib.auth.models import User
@@ -73,35 +74,49 @@ class Account(models.Model):
                 email.send()
                 
     def __str__(self):
-        return 'id=%s, email=%s' % (self.id, str(self.email))
+        return 'id=%s' % (self.id)#, str(self.email))
 
     # TO DO: cantidad de peliculas que vio y voto
     def get_votes_count(self):
+        return self.moviereview_set.filter(review__gt=0).count()
         return 4
 
     # TO DO: cantidad de peliculas que NO vio (review == 0)
     def get_unseen_count(self):
+        return self.moviereview_set.filter(review=-1).count()
         return 3
 
     # TO DO: setear review (0 == no vio, 1-5: vio)
     # 0 == no vio
-    def set_vote(self, mid, n):
-        pass
-    
-    # TO DO: elegir forma de insertar el tiempo
-    # 0 = >10, 1 = <10 anios, 2 = <5, 3 = 0
-    def set_time(self, mid, t):
-        pass
+    def vote(self, mid, n, last_watched):
+        try:
+            n= int(n)
+            last_watched= int(last_watched)
+        except: return
+        mr= MovieReview.objects.get_or_create(account=self, movie__id=mid)
+        mr.account= self
+        try:
+            mr.movie= Movie.objects.get(id=mid)
+        except:
+            return
+        mr.review= n
+        mr.last_watched= last_watched
         
+        mr.datetime= datetime.now()
+        mr.save()
+
+    
     # TO DO: pedir el review (0 == no vio)
     # 0 == no vio
     def get_vote(self, mid):
-        return 2
+        try: return self.moviereview_set.get(account=self, movie__id=mid).review
+        except: return
         
     # TO DO: pedir el tiempo de hace cuanto la vio
     # 0 = >10, 1 = <10, 2 = <5, 3 = 0
     def get_time(self, mid):
-        return 3
+        try: return self.moviereview_set.get(account=self, movie__id=mid).last_watched
+        except: return
     
     # REVISAR!
     def get_movies_by_query(self, query, cnt = 10):
@@ -162,10 +177,10 @@ class MovieReview(models.Model):
     review= models.IntegerField()
     comment= models.TextField(null=True)
     # la ultima vez que la vio. 
-    last_watched= models.DateField()
+    last_watched= models.IntegerField()
     # el nro. de pag y posicion en la que se mostro la pelicula 
-    shown_page=models.IntegerField()
-    shown_pos=models.IntegerField()
+    shown_page=models.IntegerField(null=True)
+    shown_pos=models.IntegerField(null=True)
     # fecha y hora del review
     datetime= models.DateTimeField()
 
