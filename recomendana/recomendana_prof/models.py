@@ -93,16 +93,13 @@ class Account(models.Model):
             n= int(n)
             last_watched= int(last_watched)
         except: return
-        mr= MovieReview.objects.get_or_create(account=self, movie__id=mid)
-        mr.account= self
         try:
-            mr.movie= Movie.objects.get(id=mid)
+            movie= Movie.objects.get(id=mid)
         except:
             return
-        mr.review= n
-        mr.last_watched= last_watched
-        
-        mr.datetime= datetime.now()
+
+        mr, created= MovieReview.objects.get_or_create(account=self, movie=movie,
+                                              review= n, last_watched=last_watched, datetime=datetime.now())
         mr.save()
 
     
