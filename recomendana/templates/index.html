@@ -5,6 +5,7 @@
 
 {% if user.is_authenticated %}
     <ul>
+        <li><a href="{% url 'recomendana_prof.views.voting' %}">Vota peliculas al azar</a></li>
         <li><a href="{% url 'recomendana_prof.views.salir' %}">Logout</a></li>
     </ul>
     <p>Hola,
@@ -13,6 +14,8 @@
         usuario anonimo
     {% else %}
         {{ user.username }}
+        Ya has votado  {{ user.get_profile.get_votes_count }} pel&iacute;culas y nos dijiste que no has visto
+        {{ user.get_profile.get_unseen_count }}
     {% endif %}
     .</p>
     {% block voting %}{% endblock %}

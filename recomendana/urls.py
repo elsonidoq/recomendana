@@ -27,5 +27,6 @@ urlpatterns = patterns('',
     url(r'^reg/$', 'recomendana_prof.views.namedregister'),
     url(r'^anon/$', 'recomendana_prof.views.anonregister'),
     url(r'^confirmregistration/(?P<key>.+)?', 'recomendana_prof.views.confirmregister'),
+    url(r'^vote$', 'recomendana_prof.views.voting'),
     url(r'^$', 'recomendana_prof.views.index'),
 )

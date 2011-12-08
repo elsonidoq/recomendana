@@ -79,12 +79,10 @@ class Account(models.Model):
     # TO DO: cantidad de peliculas que vio y voto
     def get_votes_count(self):
         return self.moviereview_set.filter(review__gt=0).count()
-        return 4
 
     # TO DO: cantidad de peliculas que NO vio (review == 0)
     def get_unseen_count(self):
-        return self.moviereview_set.filter(review=-1).count()
-        return 3
+        return self.moviereview_set.filter(review=0).count()
 
     # TO DO: setear review (0 == no vio, 1-5: vio)
     # 0 == no vio
@@ -98,8 +96,7 @@ class Account(models.Model):
         except:
             return
 
-        mr, created= MovieReview.objects.get_or_create(account=self, movie=movie,
-                                              review= n, last_watched=last_watched, datetime=datetime.now())
+        mr, created= MovieReview.objects.get_or_create(account=self, movie=movie,review= n, last_watched=last_watched, datetime=datetime.now())
         mr.save()
 
     

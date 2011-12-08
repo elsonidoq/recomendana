@@ -26,3 +26,24 @@ body
 .optionset{
     display: inline;
 }
+
+hr {
+    color: white;
+    background-color: white;
+    border: 0px solid white;
+    height: 1px;
+    margin: 0px;
+    padding: 0px;
+}
+hr.inter {
+    color: #505050;
+    background-color: #505050;
+    border: 0px solid #505050;
+    height: 1px;
+}
+
+.pelicula{
+    background: #eee;
+    margin: 10px;
+    padding: 5px;
+}
